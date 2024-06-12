@@ -6,6 +6,7 @@ import subprocess
 NUM_WALLETS = 5
 PCLI_PATH = '/root/.cargo/bin/pcli'
 CONFIG_PATH = '/root/.local/share/pcli/config.toml'
+RESULT_PATH = 'result.csv'
 
 
 def run_command(command):
@@ -55,10 +56,12 @@ for i in range(NUM_WALLETS):
     })
 
 csv_columns = ['id', 'mnemonic', 'address', 'viewing_key', 'spend_key']
-csv_file = 'result.csv'
 
-with open(csv_file, 'a') as csvfile:
+
+with open(RESULT_PATH, 'a') as csvfile:
     writer = csv.DictWriter(csvfile, fieldnames=csv_columns)
     writer.writeheader()
     for data in results:
         writer.writerow(data)
+
+print(f"\nresult path: {RESULT_PATH}.")
