@@ -1,11 +1,11 @@
-import os
-import subprocess
 import csv
+import os
 import re
+import subprocess
 
-num_wallets = 5
-pcli_path = '/root/.cargo/bin/pcli'
-config_path = '/root/.local/share/pcli/config.toml'
+NUM_WALLETS = 5
+PCLI_PATH = '/root/.cargo/bin/pcli'
+CONFIG_PATH = '/root/.local/share/pcli/config.toml'
 
 
 def run_command(command):
@@ -13,20 +13,25 @@ def run_command(command):
     return result.stdout
 
 
-mnemonic_regex = re.compile(r'YOUR PRIVATE SEED PHRASE:\n\n\s*(.*)\n\nSave this in a safe place!', re.DOTALL)
-viewing_key_regex = re.compile(r'full_viewing_key = "(.*)"')
-spend_key_regex = re.compile(r'spend_key = "(.*)"')
-address_regex = re.compile(r'USE AT YOUR OWN RISK\n(.*)\n')
-
 results = []
 
-for i in range(num_wallets):
-    init_output = run_command(f'{pcli_path} init soft-kms generate')
+for i in range(NUM_WALLETS):
+    try:
+        os.remove(CONFIG_PATH)
+    except:
+        pass
+
+    mnemonic_regex = re.compile(r'YOUR PRIVATE SEED PHRASE:\n\n\s*(.*)\n\nSave this in a safe place!', re.DOTALL)
+    viewing_key_regex = re.compile(r'full_viewing_key = "(.*)"')
+    spend_key_regex = re.compile(r'spend_key = "(.*)"')
+    address_regex = re.compile(r'penumbra1[0-9a-zA-Z]+')
+
+    init_output = run_command(f'{PCLI_PATH} init soft-kms generate')
     mnemonic_match = mnemonic_regex.search(init_output)
     if mnemonic_match:
         mnemonic = mnemonic_match.group(1).strip()
 
-    with open(config_path, 'r') as config_file:
+    with open(CONFIG_PATH, 'r') as config_file:
         config_content = config_file.read()
 
     viewing_key_match = viewing_key_regex.search(config_content)
@@ -35,10 +40,11 @@ for i in range(num_wallets):
         viewing_key = viewing_key_match.group(1).strip()
         spend_key = spend_key_match.group(1).strip()
 
-    address_output = run_command(f'{pcli_path} view address')
+    address_output = run_command(f'{PCLI_PATH} view address')
+
     address_match = address_regex.search(address_output)
     if address_match:
-        address = address_match.group(1).strip()
+        address = address_match.group(0).strip()
 
     results.append({
         'id': i + 1,
@@ -48,12 +54,10 @@ for i in range(num_wallets):
         'spend_key': spend_key
     })
 
-    os.remove(config_path)
-
 csv_columns = ['id', 'mnemonic', 'address', 'viewing_key', 'spend_key']
 csv_file = 'result.csv'
 
-with open(csv_file, 'w') as csvfile:
+with open(csv_file, 'a') as csvfile:
     writer = csv.DictWriter(csvfile, fieldnames=csv_columns)
     writer.writeheader()
     for data in results:
