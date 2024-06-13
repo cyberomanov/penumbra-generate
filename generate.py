@@ -50,7 +50,7 @@ if __name__ == '__main__':
     if not os.path.exists(os.path.dirname(GENERATED_PATH)):
         os.makedirs(os.path.dirname(GENERATED_PATH))
 
-    with open(GENERATED_PATH, 'aw') as csvfile:
+    with open(GENERATED_PATH, 'a') as csvfile:
         writer = csv.DictWriter(csvfile, fieldnames=csv_columns)
         writer.writeheader()
         for data in results:
