@@ -2,7 +2,7 @@ import os
 import re
 import subprocess
 
-from config import CONFIG_PATH, PCLI_PATH, LOG_FILE
+from config import CONFIG_PATH, PCLI_PATH, LOG_FILE, MNEMONIC_PATH
 from tools.other import read_mnemonics, run_command
 
 
@@ -16,7 +16,10 @@ def create_tmux_session(session_name, script_path, pcli_path, config_path, log_f
 
 
 if __name__ == '__main__':
-    mnemonics = read_mnemonics(path='data/mnemonic.txt')
+    if not os.path.exists(os.path.dirname(MNEMONIC_PATH)):
+        os.makedirs(os.path.dirname(MNEMONIC_PATH))
+
+    mnemonics = read_mnemonics(path=MNEMONIC_PATH)
 
     for mnemonic in mnemonics:
         if os.path.exists(CONFIG_PATH):

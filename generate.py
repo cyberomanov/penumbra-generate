@@ -47,6 +47,9 @@ if __name__ == '__main__':
 
     csv_columns = ['id', 'mnemonic', 'address', 'viewing_key', 'spend_key']
 
+    if not os.path.exists(os.path.dirname(GENERATED_PATH)):
+        os.makedirs(os.path.dirname(GENERATED_PATH))
+
     with open(GENERATED_PATH, 'aw') as csvfile:
         writer = csv.DictWriter(csvfile, fieldnames=csv_columns)
         writer.writeheader()
