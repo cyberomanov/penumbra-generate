@@ -47,7 +47,7 @@ if __name__ == '__main__':
 
     csv_columns = ['id', 'mnemonic', 'address', 'viewing_key', 'spend_key']
 
-    with open(GENERATED_PATH, 'a') as csvfile:
+    with open(GENERATED_PATH, 'aw') as csvfile:
         writer = csv.DictWriter(csvfile, fieldnames=csv_columns)
         writer.writeheader()
         for data in results:
