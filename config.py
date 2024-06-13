@@ -6,3 +6,4 @@ LOG_FILE = 'temp.log'
 # generator
 NUM_WALLETS = 5
 GENERATED_PATH = 'data/generate.csv'
+MNEMONIC_PATH = 'data/mnemonic.txt'
